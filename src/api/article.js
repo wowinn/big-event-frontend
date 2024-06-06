@@ -18,3 +18,8 @@ export const articeCategoryAddService = (categoryData) => {
 export const articeCategoryUpdateService = (categoryData) => {
     return request.put('/category', categoryData)
 }
+
+//文章分类删除
+export const articeCategoryDeleteService = (id) => {
+    return request.delete('/category?id=' + id)
+}
