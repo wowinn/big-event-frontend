@@ -74,7 +74,7 @@ const articles = ref([
 //分页条数据模型
 const pageNum = ref(1)//当前页
 const total = ref(20)//总条数
-const pageSize = ref(3)//每页条数
+const pageSize = ref(5)//每页条数
 
 //当每页条数发生了变化，调用此函数
 const onSizeChange = (size) => {
@@ -127,8 +127,11 @@ import '@vueup/vue-quill/dist/vue-quill.snow.css'
 import { Plus } from '@element-plus/icons-vue'
 //控制抽屉是否显示
 const visibleDrawer = ref(false)
+//控制抽屉的类型
+const drawerForAdd = ref(true)
 //添加表单数据模型
 const articleModel = ref({
+    id: null,
     title: '',
     categoryId: '',
     coverImg: '',
@@ -143,12 +146,11 @@ const tokenStore = useTokenStore()
 //上传成功的回调函数
 const uploadSuccess = (result) => {
     articleModel.value.coverImg = result.data
-    console.log(result.data);
 }
 
 import { ElMessage } from 'element-plus'
 //添加文章
-const addArticle = async(clickState) => {
+const addArticle = async (clickState) => {
     //把发布状态赋值给数据模型
     articleModel.value.state = clickState
     //调用接口
@@ -159,6 +161,48 @@ const addArticle = async(clickState) => {
     //刷新列表
     articleList()
 }
+
+//获取文章详情
+import { articleDetailService } from '@/api/article'
+const getArticle = async(row) => {
+    let result = await articleDetailService(row.id)
+    articleModel.value.id = result.data.id
+    articleModel.value.title = result.data.title;
+    articleModel.value.categoryId = result.data.categoryId
+    articleModel.value.coverImg = result.data.coverImg
+    articleModel.value.content = result.data.content
+    articleModel.value.state = result.data.state
+}
+
+
+//清楚数据模型
+const clearArticleModel = () => {
+    articleModel.value.title = ''
+    articleModel.value.categoryId = ''
+    articleModel.value.coverImg = ''
+    articleModel.value.content = '<p></p>'
+    articleModel.value.state = ''
+}
+
+
+//修改文章详情
+import { articleUpdateService } from '@/api/article'
+const updateArticle = async() => {
+    let result = await articleUpdateService(articleModel.value)
+
+    ElMessage.success(result.msg ? result.msg : '文章详情修改成功')
+    articleList()
+    visibleDrawer.value = false
+    drawerForAdd.value = true
+    clearArticleModel()
+}
+
+
+//抽屉关闭
+const handleClose =() => {
+    drawerForAdd.value = true
+    clearArticleModel()
+}
 </script>
 <template>
     <el-card class="page-container">
@@ -166,7 +210,7 @@ const addArticle = async(clickState) => {
             <div class="header">
                 <span>文章管理</span>
                 <div class="extra">
-                    <el-button type="primary" @click="visibleDrawer = true">添加文章</el-button>
+                    <el-button type="primary" @click="visibleDrawer=true;console.log(articleModel)">添加文章</el-button>
                 </div>
             </div>
         </template>
@@ -198,7 +242,8 @@ const addArticle = async(clickState) => {
             <el-table-column label="状态" prop="state"></el-table-column>
             <el-table-column label="操作" width="100">
                 <template #default="{ row }">
-                    <el-button :icon="Edit" circle plain type="primary"></el-button>
+                    <el-button :icon="Edit" circle plain type="primary"
+                        @click="visibleDrawer=true;drawerForAdd=false;getArticle(row)"></el-button>
                     <el-button :icon="Delete" circle plain type="danger"></el-button>
                 </template>
             </el-table-column>
@@ -211,8 +256,8 @@ const addArticle = async(clickState) => {
             layout="jumper, total, sizes, prev, pager, next" background :total="total" @size-change="onSizeChange"
             @current-change="onCurrentChange" style="margin-top: 20px; justify-content: flex-end" />
         <!-- 抽屉 -->
-        <el-drawer v-model="visibleDrawer" title="添加文章" direction="rtl" size="50%">
-            <!-- 添加文章表单 -->
+        <el-drawer v-model="visibleDrawer" :title="drawerForAdd?'添加文章':'修改文章'" direction="rtl" size="50%" @close="handleClose">
+            <!-- 文章表单 -->
             <el-form :model="articleModel" label-width="100px">
                 <el-form-item label="文章标题">
                     <el-input v-model="articleModel.title" placeholder="请输入标题"></el-input>
@@ -222,6 +267,12 @@ const addArticle = async(clickState) => {
                         <el-option v-for="c in categorys" :key="c.id" :label="c.categoryName" :value="c.id">
                         </el-option>
                     </el-select>
+                </el-form-item>
+                <el-form-item v-if="!drawerForAdd" label="文章状态">
+                    <el-radio-group v-model="articleModel.state" class="ml-4">
+                        <el-radio value="已发布" size="large">已发布</el-radio>
+                        <el-radio value="草稿" size="large">草稿</el-radio>
+                    </el-radio-group>
                 </el-form-item>
                 <el-form-item label="文章封面">
 
@@ -233,11 +284,8 @@ const addArticle = async(clickState) => {
                         on-success:设置上传成功的回调函数
                      -->
 
-                    <el-upload class="avatar-uploader" :auto-upload="true" :show-file-list="false"
-                    action="/api/upload"
-                    name="file"
-                    :headers="{'Authorization':tokenStore.token}"
-                    :on-success="uploadSuccess">
+                    <el-upload class="avatar-uploader" :auto-upload="true" :show-file-list="false" action="/api/upload"
+                        name="file" :headers="{ 'Authorization': tokenStore.token }" :on-success="uploadSuccess">
                         <img v-if="articleModel.coverImg" :src="articleModel.coverImg" class="avatar" />
                         <el-icon v-else class="avatar-uploader-icon">
                             <Plus />
@@ -250,9 +298,12 @@ const addArticle = async(clickState) => {
                         </quill-editor>
                     </div>
                 </el-form-item>
-                <el-form-item>
+                <el-form-item v-if="drawerForAdd">
                     <el-button type="primary" @click="addArticle('已发布')">发布</el-button>
                     <el-button type="info" @click="addArticle('草稿')">草稿</el-button>
+                </el-form-item>
+                <el-form-item v-else>
+                    <el-button type="primary" @click="updateArticle">提交修改</el-button>
                 </el-form-item>
             </el-form>
         </el-drawer>

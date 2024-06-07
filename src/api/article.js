@@ -33,3 +33,13 @@ export const articleListService = (params) => {
 export const articleAddService = (articleData) => {
     return request.post('/article', articleData)
 }
+
+//文章详情查询
+export const articleDetailService = (id) => {
+    return request.get('/article/detail', {params:{id}})
+}
+
+//文章详情修改
+export const articleUpdateService = (articleData) => {
+    return request.put('/article', articleData)
+}
