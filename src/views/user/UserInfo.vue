@@ -24,6 +24,7 @@ import { ElMessage } from 'element-plus';
 const updateUserInfo = async() => {
     //调用接口
     let result = await userInfoUpdateService(userInfo.value)
+    console.log(userInfo.value);
     ElMessage.success(result.msg? result.msg : '修改成功')
     //修改pinia中的个人信息
     userInfoStore.setInfo(userInfo.value)

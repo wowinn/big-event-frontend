@@ -36,3 +36,15 @@ export const userAvatarUpdateService = (avatarUrl) => {
     params.append('avatarUrl', avatarUrl)
     return request.patch('/user/updateAvatar', params)
 }
+
+//修改密码
+export const userPwdUpdateService = (userPwd) => {
+    console.log(userPwd);
+    let userInfo = {
+        old_pwd: userPwd.oldPassword,
+        new_pwd: userPwd.newPassword,
+        re_pwd: userPwd.rePassword
+    }
+    console.log(userInfo);
+    return request.patch('/user/updatePwd', userInfo)
+}
