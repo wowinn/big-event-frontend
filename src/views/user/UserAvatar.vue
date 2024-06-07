@@ -3,12 +3,28 @@ import { Plus, Upload } from '@element-plus/icons-vue'
 import {ref} from 'vue'
 import avatar from '@/assets/default.png'
 const uploadRef = ref()
+import { useTokenStore } from '@/stores/token'
+const tokenStore = useTokenStore()
 
 import useUserInfoStore from '@/stores/userInfo'
 const userInfoStore = useUserInfoStore()
 //用户头像地址
 const imgUrl= ref(userInfoStore.info.userPic)
 
+//图片上传成功的回调函数
+const uploadSuccess = (result) => {
+    imgUrl.value = result.data
+}
+
+import { userAvatarUpdateService } from '@/api/user'
+import { ElMessage } from 'element-plus';
+//头像修改
+const updateAvatar = async() => {
+    let result = await userAvatarUpdateService(imgUrl.value)
+    ElMessage.success(result.msg ? result.msg :'修改成功')
+    //修改pinia中的数据
+    userInfoStore.info.userPic = imgUrl.value
+}
 </script>
 
 <template>
@@ -24,6 +40,11 @@ const imgUrl= ref(userInfoStore.info.userPic)
                     ref="uploadRef"
                     class="avatar-uploader" 
                     :show-file-list="false"
+                    :auto-upload="true"
+                    action="/api/upload"
+                    name="file"
+                    :headers="{'Authorization':tokenStore.token}"
+                    :on-success="uploadSuccess"
                     >
                     <img v-if="imgUrl" :src="imgUrl" class="avatar" />
                     <img v-else :src="avatar" width="278" />
@@ -32,7 +53,7 @@ const imgUrl= ref(userInfoStore.info.userPic)
                 <el-button type="primary" :icon="Plus" size="large"  @click="uploadRef.$el.querySelector('input').click()">
                     选择图片
                 </el-button>
-                <el-button type="success" :icon="Upload" size="large">
+                <el-button type="success" :icon="Upload" size="large" @click="updateAvatar">
                     上传头像
                 </el-button>
             </el-col>
