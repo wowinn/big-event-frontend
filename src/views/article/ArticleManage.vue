@@ -197,11 +197,37 @@ const updateArticle = async() => {
     clearArticleModel()
 }
 
-
 //抽屉关闭
 const handleClose =() => {
     drawerForAdd.value = true
     clearArticleModel()
+}
+
+//删除文章
+import { articleDeleteService } from '@/api/article'
+import { ElMessageBox } from 'element-plus'
+const deleteArticle = (row) => {
+    ElMessageBox.confirm(
+        '确认要删除该文章吗',
+        '温馨提示',
+        {
+            confirmButtonText: '确认',
+            cancelButtonText: '取消',
+            type: 'warning'
+        }
+    ).then(async() => {  
+        let result = await articleDeleteService(row.id)
+        articleList()
+        ElMessage({
+            type: 'success',
+            message: '删除成功'
+        })
+    }).catch(() => {
+        ElMessage({
+            type: 'info',
+            message: '取消删除文章'
+        })
+    })
 }
 </script>
 <template>
@@ -244,7 +270,7 @@ const handleClose =() => {
                 <template #default="{ row }">
                     <el-button :icon="Edit" circle plain type="primary"
                         @click="visibleDrawer=true;drawerForAdd=false;getArticle(row)"></el-button>
-                    <el-button :icon="Delete" circle plain type="danger"></el-button>
+                    <el-button :icon="Delete" circle plain type="danger" @click="deleteArticle(row)"></el-button>
                 </template>
             </el-table-column>
             <template #empty>

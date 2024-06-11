@@ -43,3 +43,8 @@ export const articleDetailService = (id) => {
 export const articleUpdateService = (articleData) => {
     return request.put('/article', articleData)
 }
+
+//删除文章
+export const articleDeleteService = (id) => {
+    return request.delete('/article', {params:{id}})
+}
