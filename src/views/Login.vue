@@ -40,14 +40,6 @@ const rules = {
 import { userRegisterService, userLoginService } from "@/api/user.js"
 const register = async () => {
     let result = await userRegisterService(registerData.value)
-    // if(result.code === 0) {
-    //     //成功
-    //     alert(result.msg ? result.msg : '注册成功')
-    // } else {
-    //     //失败
-    //     alert('注册失败')
-    // }
-    // alert(result.msg ? result.msg : '注册成功')
     ElMessage.success(result.data.msg ? result.data.msg : '注册成功')
 }
 
@@ -95,7 +87,8 @@ const clearRegisterData = () => {
     registerData.value = {
         username: '',
         password: '',
-        rePassword: ''
+        rePassword: '',
+        remerber: false
     }
 }
 </script>
@@ -127,7 +120,7 @@ const clearRegisterData = () => {
                     </el-button>
                 </el-form-item>
                 <el-form-item class="flex">
-                    <el-link type="info" :underline="false" @click="isRegister = false; clearRegisterData">
+                    <el-link type="info" :underline="false" @click="isRegister = false;  getCookie()">
                         ← 返回
                     </el-link>
                 </el-form-item>
