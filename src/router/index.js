@@ -8,10 +8,18 @@ import ArticleManageVue from "@/views/article/ArticleManage.vue"
 import UserAvatarVue from "@/views/user/UserAvatar.vue"
 import UserInfoVue from "@/views/user/UserInfo.vue"
 import UserResetPasswordVue from "@/views/user/UserResetPassword.vue"
+import UserFindPassword from "@/views/user/UserFindPassword.vue"
 
 //定义路由关系
 const routes = [
-    { path: '/login', component: LoginVue },
+    { 
+        path: '/login', 
+        component: LoginVue, 
+    },
+    {
+        path: '/passwd/reset',
+        component: UserFindPassword
+    },
     {
         path: '/',
         component: LayoutVue,

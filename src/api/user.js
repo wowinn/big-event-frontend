@@ -48,3 +48,8 @@ export const userPwdUpdateService = (userPwd) => {
     console.log(userInfo);
     return request.patch('/user/updatePwd', userInfo)
 }
+
+//发送邮箱验证码
+export const UserSendCodeService = (email) => {
+    return request.get('/user/findPwd')
+}

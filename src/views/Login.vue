@@ -149,7 +149,7 @@ const clearRegisterData = () => {
                 <el-form-item class="flex">
                     <div class="flex">
                         <el-checkbox v-model="registerData.remerber">记住我</el-checkbox>
-                        <el-link type="primary" :underline="false">忘记密码？</el-link>
+                        <el-link type="primary" :underline="false" href="/passwd/reset">忘记密码？</el-link>
                     </div>
                 </el-form-item>
                 <!-- 登录按钮 -->
