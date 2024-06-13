@@ -7,6 +7,7 @@ const isRegister = ref(false)
 //定义数据模型
 const registerData = ref({
     username: '',
+    email: '',
     password: '',
     rePassword: '',
     remerber: false
@@ -27,6 +28,10 @@ const rules = {
         { required: true, message: '请输入用户名', trigger: 'blur' },
         { min: 5, max: 16, message: '长度为5~16位非空字符', trigger: 'blur' }
     ],
+    email: [
+        { required: true, message: '请输入邮箱', trigger: 'blur' },
+        { type: 'email', message: '请输入正确的邮箱地址', trigger: 'blur' }
+    ],
     password: [
         { required: true, message: '请输入密码', trigger: 'blur' },
         { min: 5, max: 16, message: '长度为5~16位非空字符', trigger: 'blur' }
@@ -40,7 +45,7 @@ const rules = {
 import { userRegisterService, userLoginService } from "@/api/user.js"
 const register = async () => {
     let result = await userRegisterService(registerData.value)
-    ElMessage.success(result.data.msg ? result.data.msg : '注册成功')
+    ElMessage.success('注册成功')
 }
 
 //绑定数据，复用注册表单的数据模型
@@ -54,7 +59,7 @@ const router = useRouter()
 const tokenStore = useTokenStore()
 const login = async () => {
     let result = await userLoginService(registerData.value)
-    ElMessage.success(result.msg ? result.msg : '登录成功')
+    ElMessage.success('登录成功')
     //存储token
     tokenStore.setToken(result.data)
     //跳转到首页 路由完成跳转
@@ -104,6 +109,10 @@ const clearRegisterData = () => {
                 </el-form-item>
                 <el-form-item prop="username">
                     <el-input :prefix-icon="User" placeholder="请输入用户名" v-model="registerData.username"></el-input>
+                </el-form-item>
+                <el-form-item prop="email">
+                    <el-input :prefix-icon="Lock" placeholder="请输入邮箱"
+                        v-model="registerData.email"></el-input>
                 </el-form-item>
                 <el-form-item prop="password">
                     <el-input :prefix-icon="Lock" type="password" show-password placeholder="请输入密码"

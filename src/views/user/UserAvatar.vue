@@ -20,6 +20,7 @@ import { userAvatarUpdateService } from '@/api/user'
 import { ElMessage } from 'element-plus';
 //头像修改
 const updateAvatar = async() => {
+    console.log(imgUrl.value)
     let result = await userAvatarUpdateService(imgUrl.value)
     ElMessage.success(result.msg ? result.msg :'修改成功')
     //修改pinia中的数据
