@@ -7,8 +7,8 @@ import ArticleCategoryVue from "@/views/article/ArticleCategory.vue"
 import ArticleManageVue from "@/views/article/ArticleManage.vue"
 import UserAvatarVue from "@/views/user/UserAvatar.vue"
 import UserInfoVue from "@/views/user/UserInfo.vue"
-import UserResetPasswordVue from "@/views/user/UserResetPassword.vue"
-import UserFindPassword from "@/views/user/UserFindPassword.vue"
+import UserUpdatePasswordVue from "@/views/user/UserUpdatePassword.vue"
+import UserFindPassword from "@/views/user/UserResetPassword.vue"
 
 //定义路由关系
 const routes = [
@@ -31,7 +31,7 @@ const routes = [
             { path: '/artice/manage', component: ArticleManageVue },
             { path: '/user/avatar', component: UserAvatarVue },
             { path: '/user/info', component: UserInfoVue },
-            { path: '/user/resetPassword', component: UserResetPasswordVue },
+            { path: '/user/updatePassword', component: UserUpdatePasswordVue },
         ]
     }
 ]

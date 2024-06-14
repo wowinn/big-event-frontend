@@ -51,5 +51,10 @@ export const userPwdUpdateService = (userPwd) => {
 
 //发送邮箱验证码
 export const UserSendCodeService = (email) => {
-    return request.get('/user/findPwd')
+    return request.get('/user/findEmail', {params:{email}})
+}
+
+//重置密码
+export const userPwdResetService = (userInfo) => {
+    return request.post('/user/resetPwd', userInfo)
 }
